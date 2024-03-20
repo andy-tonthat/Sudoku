@@ -6,7 +6,7 @@ from   string import digits
 ##--[ Global Imports ]---------------------------------------------------------
 
 
-#---[ Board Generator Class ]--------------------------------------------------
+#---[ CLI Arguments Handler Class ]--------------------------------------------
 class ArgvHandler:
     def __init__(self) -> None:
         self._EXPECTED_ARG_COUNT = 6
@@ -16,7 +16,6 @@ class ArgvHandler:
 
     def getArgsTup(self) -> tuple[str, int, int, int, int]:
         self.validateArgs()
-
         return (
             self._argv[1],
             int(self._argv[2]),
@@ -54,11 +53,22 @@ class ArgvHandler:
 
         return
 
+##--[ CLI Arguments Handler Class ]--------------------------------------------
 
+#---[ Board Generator Class ]--------------------------------------------------
 class BoardGenerator:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, argTup: tuple[str, int, int, int, int]) -> None:
+        self.baseFileName = argTup[0]
+        self.numFiles     = argTup[1]
+        self.rows         = argTup[2]
+        self.cols         = argTup[3]
+        self.numHints     = argTup[4]
+
+        return
     
+    def createBoard(self) -> list[list[str]]:
+        
+        return
 
 ##--[ Board Generator Class ]--------------------------------------------------
     
