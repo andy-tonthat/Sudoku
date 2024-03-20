@@ -61,6 +61,7 @@ class ArgvHandler:
 
 ##--[ CLI Arguments Handler Class ]--------------------------------------------
 
+
 #---[ Board Generator Class ]--------------------------------------------------
 class BoardGenerator:
     def __init__(self, argTup: tuple[str, int, int, int, int]) -> None:
@@ -161,7 +162,7 @@ class BoardGenerator:
         return
 
 ##--[ Board Generator Class ]--------------------------------------------------
-    
+
 
 #---[ Main Function ]----------------------------------------------------------
 def main() -> None:
