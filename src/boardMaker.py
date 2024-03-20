@@ -1,7 +1,7 @@
 #---[ Global Imports ]---------------------------------------------------------
 import sys
-from   random import randint
-from   string import digits, ascii_uppercase
+from   random  import randint
+from   string  import digits, ascii_uppercase
 from   pathlib import Path
 
 ##--[ Global Imports ]---------------------------------------------------------
