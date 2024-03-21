@@ -72,7 +72,7 @@ class BoardGenerator:
         self.numHints     = argTup[4]
 
         self.cellSize = self.rows * self.cols
-        self.resourcePath = Path(__file__).parent.resolve() / "rsrc"
+        self.resourcePath = Path(__file__).parent.parent.resolve() / "rsrc"
         if not self.resourcePath.exists():
             self.resourcePath.mkdir()
 
@@ -92,11 +92,11 @@ class BoardGenerator:
         # assign hint values
         numHintsAssigned = 0
         while numHintsAssigned < self.numHints:
-            rowPicked = randint(0, self.cellSize - 1)
-            colPicked = randint(0, self.cellSize - 1)
+            rowPicked   = randint(0, self.cellSize - 1)
+            colPicked   = randint(0, self.cellSize - 1)
             valToAssign = randint(1, self.cellSize)
 
-            valUnassigned = board[rowPicked][colPicked] == 0
+            valUnassigned     = board[rowPicked][colPicked] == 0
             assignmentIsValid = self.isValidValue(valToAssign, board, rowPicked, colPicked)
             if valUnassigned and assignmentIsValid:
                 board[rowPicked][colPicked] = valToAssign
