@@ -1,3 +1,4 @@
+#---[ Domain Class ]-----------------------------------------------------------
 class Domain:
     def __init__(self, valueList: list[int]) -> None:
         self.values   = valueList
@@ -6,6 +7,12 @@ class Domain:
         return
 
     #---[ Accessors ]----------------------------------------------------------
+    def getValues(self) -> list[int]:
+        return self.values
+
+    def isModified(self) -> bool:
+        return self.modified
+    
     def containsValue(self, value: int) -> bool:
         return value in self.valueList
     
@@ -15,8 +22,11 @@ class Domain:
     def isEmpty(self) -> bool:
         return not self.valueList
     
-    def isModified(self) -> bool:
-        return self.modified
+    def getFront(self) -> int:
+        if self.getSize() < 1:
+            return 0
+        
+        return self.values[0]
     
     ##--[ Accessors ]----------------------------------------------------------
 
@@ -43,21 +53,87 @@ class Domain:
 
     ##--[ Mutators ]-----------------------------------------------------------
 
+##--[ Domain Class ]-----------------------------------------------------------
+
+
+#---[ Variable Class ]---------------------------------------------------------
 class Variable:
-    '''
-        - represents a variable in CSP
-    '''
-    def __init__(self) -> None:
+    #---[ Data Model Methods ]-------------------------------------------------
+    def __init__(self, possibleValues: list[int], row: int, col: int, block) -> None:
+        self.row = row
+        self.col = col
+        self.domain = Domain(possibleValues)
+        self.block = block
+
+        self.modified   = True
+        self.changeable = False
+        self.assigned   = True
+
+        if self.size() != 1:
+            self.modified   = False
+            self.changeable = True
+            self.assigned   = False
+        
+        return
+    
+    ##--[ Data Model Methods ]-------------------------------------------------
+    
+    # Accessors
+    def getAssignedValue(self) -> int:
+        if not self.assigned:
+            return 0
+        
+        return self.domain.getFront()
+    
+    def getDomain(self) -> Domain:
+        return self.domain
+    
+    def getValues(self) -> list[int]:
+        return self.domain.getValues()
+
+    def getSize(self) -> int:
+        return self.domain.getSize()
+
+    def isModified(self) -> bool:
+        return self.modified
+    
+    def isChangeable(self) -> bool:
+        return self.changeable
+    
+    def isAssigned(self) -> bool:
+        return self.assigned
+
+    # Mutators
+    def assignValue(self, valueToAssign: int) -> None:
+        if not self.changeable: return
+
+        self.assigned = True
+        self.domain = Domain([valueToAssign])
 
         return
 
+    def setModifier(self, newModifier: bool) -> None:
+        self.modified = newModifier
+        self.domain.setModified(newModifier)
+        return
+    
+    def setUnassigned(self) -> None:
+        self.assigned = False
+
+##--[ Variable Class ]---------------------------------------------------------
+
+
+#---[ Constraint Class ]-------------------------------------------------------
 class Constraint:
     pass
 
+##--[ Constraint Class ]-------------------------------------------------------
+
+
+#---[ Trail Class ]------------------------------------------------------------
 class Trail:
     '''
-        - Represents a stack holding problem changes.
-          - stacks fascilitate backtracking
+        - stack holding CSP changes. used for backtracking
     '''
     
     def __init__(self) -> None:
@@ -89,5 +165,11 @@ class Trail:
 
         self.pushCount += 1
 
+##--[ Trail Class ]------------------------------------------------------------
+
+
+#---[ Constraint Network Class ]-----------------------------------------------
 class ConstraintNetwork:
     pass
+
+##--[ Constraint Network Class ]-----------------------------------------------
