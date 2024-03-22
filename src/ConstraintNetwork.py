@@ -105,10 +105,30 @@ class Variable:
 
     # Mutators
     def assignValue(self, valueToAssign: int) -> None:
-        if not self.changeable: return
+        if not self.changeable:
+            return
 
         self.assigned = True
         self.domain = Domain([valueToAssign])
+
+        return
+    
+    def setDomain(self, domain: Domain) -> None:
+        if not self.changeable:
+            return
+        
+        if self.domain != domain:
+            self.domain = domain
+            self.modified = True
+
+        return
+    
+    def removeValueFromDomain(self, valueToRemove: int) -> None:
+        if not self.changeable:
+            return
+        
+        self.domain.removeValue(valueToRemove)
+        self.modified = self.domain.isModified()
 
         return
 
