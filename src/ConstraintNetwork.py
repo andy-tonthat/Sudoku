@@ -256,6 +256,96 @@ class Trail:
 
 #---[ Constraint Network Class ]-----------------------------------------------
 class ConstraintNetwork:
-    pass
+    from SudokuBoard import SudokuBoard
+
+    def __init__(self, sudokuBoard: SudokuBoard) -> None:
+        self.constraintList: list[Constraint] = []
+        self.variableList:   list[Variable]   = []
+
+        if not sudokuBoard:
+            pass
+
+    # Accessors
+    def getConstraintList(self) -> list[Constraint]:
+        return self.constraintList
+    
+    def getVariableList(self) -> list[Variable]:
+        return self.variableList
+    
+    # Mutators
+    def addConstraint(self, constraint: Constraint) -> None:
+        if constraint not in self.constraintList:
+            self.constraintList.append(constraint)
+        
+        return
+    
+    def addVariable(self, variable: Variable) -> None:
+        if variable not in self.variableList:
+            self.variableList.append(variable)
+        
+        return
+    
+    # Constraint Network Methods
+    def checkIfConsistent(self) -> bool:
+        '''
+        Checks if every constraint is consistent
+        
+        - returns:
+          - True  -> every constraint is consistent
+          - False -> at least 1 constraint is not consistent
+        '''
+        res = True
+
+        for constraint in self.constraintList:
+            if not constraint.checkIfConsistent():
+                res = False
+                break
+
+        return res
+
+    def getNeighborsList(self, variable: Variable) -> list[Variable]:
+        '''
+        Gets a list of variables that shares at least 1 constraint with variable parameter
+
+        - param:
+          - variable: Variable to find other variables w/ shared constraint
+        
+        - returns:
+          - neighborList: list of Variables containing any shared constraint w/ variable
+        '''
+        neighborList = []
+
+        for constraint in self.constraintList:
+            if constraint.containsVariable(variable):
+                for neighbor in constraint.getVariableList():
+                    neighborList.add(neighbor)
+
+        try:
+            neighborList.remove(variable)
+        except:
+            pass
+        
+        return neighborList
+
+    def getConstraintsListContainingVariable(self, variable: Variable) -> list[Constraint]:
+        constraintList = []
+
+        for constraint in self.constraintList:
+            if variable in constraint.containsVariable(variable):
+                constraintList.append(constraint)
+        
+        return constraintList
+    
+    def getModifiedConstraintsList(self) -> list[Constraint]:
+        modifiedConstraintsList = []
+
+        for constraint in self.constraintList:
+            if constraint.checkIfModified():
+                modifiedConstraintsList.append(constraint)
+        
+        for variable in self.variableList:
+            variable.setModifier(False)
+        
+        return modifiedConstraintsList
 
 ##--[ Constraint Network Class ]-----------------------------------------------
