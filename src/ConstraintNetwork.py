@@ -1,32 +1,32 @@
 #---[ Domain Class ]-----------------------------------------------------------
 class Domain:
-    def __init__(self, valueList: list[int]) -> None:
-        self.values   = valueList
-        self.modified = False
+    def __init__(self, valuesList: list[int]) -> None:
+        self.valuesList = valuesList
+        self.modified  = False
         
         return
 
     #---[ Accessors ]----------------------------------------------------------
-    def getValues(self) -> list[int]:
-        return self.values
+    def getValuesList(self) -> list[int]:
+        return self.valuesList
 
     def isModified(self) -> bool:
         return self.modified
     
     def containsValue(self, value: int) -> bool:
-        return value in self.valueList
+        return value in self.valuesList
     
     def getSize(self) -> int:
-        return len(self.values)
+        return len(self.valuesList)
 
     def isEmpty(self) -> bool:
-        return not self.valueList
+        return not self.valuesList
     
     def getFront(self) -> int:
         if self.getSize() < 1:
             return 0
         
-        return self.values[0]
+        return self.valuesList[0]
     
     ##--[ Accessors ]----------------------------------------------------------
 
@@ -94,13 +94,13 @@ class Variable:
     def getSize(self) -> int:
         return self.domain.getSize()
 
-    def isModified(self) -> bool:
+    def checkIfModified(self) -> bool:
         return self.modified
     
-    def isChangeable(self) -> bool:
+    def checkIfChangable(self) -> bool:
         return self.changeable
     
-    def isAssigned(self) -> bool:
+    def checkIfAssigned(self) -> bool:
         return self.assigned
 
     # Mutators
@@ -145,7 +145,45 @@ class Variable:
 
 #---[ Constraint Class ]-------------------------------------------------------
 class Constraint:
-    pass
+    def __init__(self) -> None:
+        self.variableList: list[Variable] = []
+        return
+    
+    # Accessors
+    def getSize(self) -> int:
+        return len(self.variableList)
+
+    # Constraint Methods
+    def addVariable(self, variable: Variable) -> None:
+        self.variableList.append(variable)
+        return
+    
+    def containsVariable(self, variable: Variable) -> bool:
+        return variable in self.variableList
+    
+    def checkIfModified(self) -> bool:
+        res = False
+
+        for variable in self.variableList:
+            if not variable.checkIfModified():
+                res = True
+                break
+
+        return res
+
+    def checkIfConsistent(self) -> bool:
+        for variableOne in self.variableList:
+            if not variableOne.checkIfAssigned():
+                continue
+
+            for variableTwo in self.variableList:
+                if not variableTwo.checkIfAssigned() or variableOne == variableTwo:
+                    continue
+
+                if variableOne.getAssignedValue() == variableTwo.getAssignedValue():
+                    return False
+
+        return True
 
 ##--[ Constraint Class ]-------------------------------------------------------
 
