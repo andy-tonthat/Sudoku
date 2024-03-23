@@ -59,11 +59,10 @@ class Domain:
 #---[ Variable Class ]---------------------------------------------------------
 class Variable:
     #---[ Data Model Methods ]-------------------------------------------------
-    def __init__(self, possibleValues: list[int], row: int, col: int, block) -> None:
+    def __init__(self, possibleValues: list[int], row: int, col: int) -> None:
         self.row = row
         self.col = col
         self.domain = Domain(possibleValues)
-        self.block = block
 
         self.modified   = True
         self.changeable = False
@@ -150,6 +149,9 @@ class Constraint:
         return
     
     # Accessors
+    def getVariableList(self) -> list[Variable]:
+        return self.variableList
+
     def getSize(self) -> int:
         return len(self.variableList)
 
@@ -195,15 +197,15 @@ class Trail:
     '''
     
     def __init__(self) -> None:
-        self.stack  = []
-        self.marker = []
+        self.stateStack = []
+        self.sizeStack  = []
 
         self.pushCount   = 0
         self.rewindCount = 0
 
     #---[ Accessors ]----------------------------------------------------------
     def getSize(self) -> int:
-        return len(self.stack)
+        return len(self.stateStack)
 
     def getPushCount(self) -> int:
         return self.pushCount
@@ -213,15 +215,41 @@ class Trail:
     ##--[ Accessors ]----------------------------------------------------------
 
 
-    def placeTrailMarker(self) -> None:
-        self.marker.append(self.getSize())
+    def saveCurrSize(self) -> None:
+        self.sizeStack.append(self.getSize())
         return
 
-    def pushVariable(self, variable: Variable) -> None:
-        currDomain = Domain()
+    def pushState(self, variable: Variable) -> None:
+        listCopy = [value for value in variable.getValues()]
+        currDomain = Domain(listCopy)
         
+        state = tuple(variable, currDomain)
+        self.stack.append(state)
 
         self.pushCount += 1
+        return
+    
+    def rewindState(self) -> None:
+        targetStackSize = self.sizeStack.pop()
+        currStackSize   = self.getSize()
+
+        for i in range(currStackSize, targetStackSize-1, -1):
+            state = self.stateStack.pop()
+
+            stateVar: Variable  = state[0]
+            stateDomain: Domain = state[1]
+            stateVar.setDomain(stateDomain)
+            stateVar.setModifier(False)
+            stateVar.setUnassigned() 
+
+        self.rewindCount += 1
+        return
+    
+    def clearTrail(self) -> None:
+        self.stateStack = []
+        self.sizeStack  = []
+
+        return
 
 ##--[ Trail Class ]------------------------------------------------------------
 
